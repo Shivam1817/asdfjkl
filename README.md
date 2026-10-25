@@ -3,8 +3,9 @@
 A React dashboard and Python API for reviewing GB wind forecasts available at a historical
 day-ahead purchasing decision and measuring their accuracy against reported outturn.
 The dashboard includes decision controls, a forecast comparison chart, and daily
-accuracy metrics. Docker packaging, deployment, and the demonstration video are
-still to be completed.
+accuracy metrics. A production entry point serves the built dashboard and API
+together. Docker packaging, deployment, and the demonstration video are still
+to be completed.
 
 ## Run locally
 
@@ -34,10 +35,6 @@ on port 8000 during development. Form edits are applied when you press
 missing chart values remain gaps. The chart uses GW on its axis and MW in its
 tooltip; the accuracy cards use MW.
 
-Create the frontend production files with `npm run build` from `frontend/`.
-The output is written to `frontend/dist/`. Deployment will need to route `/api`
-to the Python backend; the development proxy is not a production deployment.
-
 Example request:
 
 ```bash
@@ -50,6 +47,37 @@ Run the tests without making external network requests:
 .venv/bin/python -m unittest discover -s tests -v
 ```
 
+Production integration checks run when `frontend/dist/index.html` exists;
+otherwise they are skipped. Build the frontend first to include those checks.
+
+## Run the production build locally
+
+From the repository root:
+
+```bash
+npm --prefix frontend run build
+.venv/bin/python -m uvicorn backend.production:app --host 127.0.0.1 --port 8080
+```
+
+Open <http://127.0.0.1:8080>. This uses one Python server, without Vite's dev
+server or `--reload`. Port 8080 lets you compare it with the development servers.
+Press Ctrl+C to stop it.
+
+- Vite compiles React into HTML, CSS, and JavaScript under `frontend/dist/`.
+- `backend/production.py` serves those files at `/` and the API at `/api/day-ahead`.
+- The browser's existing `/api` requests go to the same server as the page,
+  so no frontend API URL setting or CORS configuration is required.
+
+The production entry point requires the build directory to exist. It resolves
+the directory relative to its Python file, rather than the terminal's working
+directory. API routes take priority over frontend files. Unknown paths return
+404; this dashboard uses section anchors rather than client-side page routes.
+Rebuild the frontend after changes to React or CSS. Node.js is needed to build,
+but only Python is needed to run the built application.
+
+This is a local verification of the production serving setup. Docker will
+automate the build and runtime steps; public hosting is still pending.
+
 ## Code layout
 
 | Path | Responsibility |
@@ -58,6 +86,7 @@ Run the tests without making external network requests:
 | `backend/forecasts.py` | Parse timezone-aware timestamps and select forecasts available at the decision. |
 | `backend/analysis.py` | Match delivery timestamps and calculate MAE, RMSE, and bias. |
 | `backend/app.py` | Validate HTTP inputs and connect the pipeline. |
+| `backend/production.py` | Serve the API and built dashboard from one origin. |
 | `frontend/src/App.jsx` | Decision form, request state, results, and metric cards. |
 | `frontend/src/WindChart.jsx` | Display hourly series, preserving gaps for missing values. |
 | `frontend/src/styles.css` | Responsive dashboard styling. |
