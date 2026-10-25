@@ -135,6 +135,7 @@ Base image tags receive updates; `--pull` checks for newer versions when rebuild
 | `backend/app.py` | Validate HTTP inputs and connect the pipeline. |
 | `backend/production.py` | Serve the API and built dashboard from one origin. |
 | `Dockerfile`, `.dockerignore` | Build the frontend and package the Python runtime without local generated files. |
+| `pyproject.toml`, `vercel.json`, `.python-version` | Configure Vercel's application entry point, frontend build, function bundle, and Python version. |
 | `frontend/src/App.jsx` | Decision form, request state, results, and metric cards. |
 | `frontend/src/WindChart.jsx` | Display hourly series, preserving gaps for missing values. |
 | `frontend/src/styles.css` | Responsive dashboard styling. |
@@ -184,4 +185,15 @@ documentation.
 
 ## Deployment
 
-Not deployed yet. A hosted application URL will be added when deployment is complete.
+Vercel configuration uses the repository root with the **FastAPI** framework.
+`pyproject.toml` points to `backend.production:app`, and `.python-version` selects
+Python 3.12. The build command installs the frontend's locked dependencies and
+builds React before Vercel loads the app. `vercel.json` excludes frontend
+`node_modules` and tests from the Python function bundle.
+
+Vercel serves the generated frontend files through its CDN and API requests
+through its Python runtime. The frontend keeps using the same `/api` URL;
+no API key or additional environment variables are required.
+The Docker image remains available for running the complete app as a container.
+
+A verified public URL will be added after deployment completes.
