@@ -77,9 +77,6 @@ directory. API routes take priority over frontend files. Unknown paths return
 Rebuild the frontend after changes to React or CSS. Node.js is needed to build,
 but only Python is needed to run the built application.
 
-This is a local verification of the production serving setup; public hosting
-is still pending.
-
 ## Run with Docker
 
 Start Docker Desktop, then run from the repository root:
@@ -207,3 +204,8 @@ without login; a 31 January decision at 08:45 returns 1 February delivery with
 24 matching actuals. Invalid dates return 422, and unknown API/asset paths return
 404. The dashboard also fits a 390-pixel mobile viewport without horizontal
 overflow.
+
+The 25 October 2026 audit checked all 31 January decisions at 09:00 UTC:
+each returned 24 forecasts and 24 matching actuals, with no forecast published
+after its decision cutoff and all samples on the next delivery day. Manual
+incognito checks passed for both the app and the public GitHub repository.
