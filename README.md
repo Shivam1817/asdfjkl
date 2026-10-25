@@ -1,13 +1,16 @@
 # Wind forecast analysis
 
-A small Python API for reviewing GB wind forecasts available at a historical
+A React dashboard and Python API for reviewing GB wind forecasts available at a historical
 day-ahead purchasing decision and measuring their accuracy against reported outturn.
-This checkpoint contains the backend. The React interface, Docker packaging,
-deployment, and demonstration video are still to be completed.
+The dashboard includes decision controls, a forecast comparison chart, and daily
+accuracy metrics. Docker packaging, deployment, and the demonstration video are
+still to be completed.
 
 ## Run locally
 
-Requires Python 3.12 or newer and [uv](https://docs.astral.sh/uv/).
+Requires Python 3.12 or newer, [uv](https://docs.astral.sh/uv/), and Node.js 22.12 or newer.
+
+Start the API from the repository root:
 
 ```bash
 uv venv --python python3.12 .venv
@@ -16,6 +19,24 @@ uv pip install --python .venv/bin/python -r requirements-dev.txt
 ```
 
 Open the interactive API documentation at <http://127.0.0.1:8000/docs>.
+
+In a second terminal, start the React interface:
+
+```bash
+cd frontend
+npm ci
+npm run dev
+```
+
+Open <http://127.0.0.1:5173>. Vite forwards `/api` requests to the Python server
+on port 8000 during development. Form edits are applied when you press
+**Load outlook**. Loading, unavailable-data, and empty-data states are explicit;
+missing chart values remain gaps. The chart uses GW on its axis and MW in its
+tooltip; the accuracy cards use MW.
+
+Create the frontend production files with `npm run build` from `frontend/`.
+The output is written to `frontend/dist/`. Deployment will need to route `/api`
+to the Python backend; the development proxy is not a production deployment.
 
 Example request:
 
@@ -37,6 +58,12 @@ Run the tests without making external network requests:
 | `backend/forecasts.py` | Parse timezone-aware timestamps and select forecasts available at the decision. |
 | `backend/analysis.py` | Match delivery timestamps and calculate MAE, RMSE, and bias. |
 | `backend/app.py` | Validate HTTP inputs and connect the pipeline. |
+| `frontend/src/App.jsx` | Decision form, request state, results, and metric cards. |
+| `frontend/src/WindChart.jsx` | Display hourly series, preserving gaps for missing values. |
+| `frontend/src/styles.css` | Responsive dashboard styling. |
+| `frontend/src/main.jsx` | Mount the React application in the page. |
+| `frontend/vite.config.js` | React build setup and local API proxy. |
+| `frontend/package.json`, `frontend/package-lock.json` | Frontend commands and reproducible dependency versions. |
 | `tests/` | Test the calculations, request filters, and HTTP behavior. |
 | `requirements.txt` | Pinned direct runtime dependencies. |
 | `requirements-dev.txt` | Runtime dependencies plus the HTTP test client. |
