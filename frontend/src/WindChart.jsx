@@ -13,19 +13,19 @@ export default function WindChart({ data }) {
     <div className="chart-canvas" aria-label="Hourly wind forecasts and matching half-hour actuals">
       <ResponsiveContainer width="100%" height="100%" minWidth={0}>
         <LineChart data={points} margin={{ top: 16, right: 12, left: -12, bottom: 8 }} accessibilityLayer>
-          <CartesianGrid vertical={false} stroke="#e7ece8" strokeDasharray="3 4" />
+          <CartesianGrid vertical={false} stroke="var(--line)" strokeDasharray="3 4" />
           <XAxis dataKey="hour" ticks={[0, 3, 6, 9, 12, 15, 18, 21, 23]} tickFormatter={hourLabel}
-            tickLine={false} axisLine={false} minTickGap={24} tick={{ fill: "#69776f", fontSize: 11 }} dy={10} />
+            tickLine={false} axisLine={false} minTickGap={24} tick={{ fill: "var(--muted)", fontSize: 11 }} dy={10} />
           <YAxis domain={[0, "auto"]} tickFormatter={(value) => (value / 1000).toLocaleString("en-GB")}
-            tickLine={false} axisLine={false} width={54} tick={{ fill: "#69776f", fontSize: 11 }} />
+            tickLine={false} axisLine={false} width={54} tick={{ fill: "var(--muted)", fontSize: 11 }} />
           <Tooltip labelFormatter={(hour) => `${hourLabel(hour)} UK / UTC`}
             formatter={(value, name) => [`${Number(value).toLocaleString("en-GB", { maximumFractionDigits: 0 })} MW`, name]}
-            contentStyle={{ border: "1px solid #dce4df", borderRadius: 10, fontSize: 13 }}
-            labelStyle={{ color: "#233c32", fontWeight: 600 }} />
-          <Line type="linear" dataKey="forecastMW" name="Forecast" stroke="#247b66" strokeWidth={2.5}
-            strokeDasharray="6 5" dot={{ r: 2, strokeWidth: 0, fill: "#247b66" }} activeDot={{ r: 5 }} connectNulls={false} isAnimationActive={false} />
-          <Line type="linear" dataKey="actualMW" name="Actual" stroke="#59677a" strokeWidth={2.5}
-            dot={{ r: 2, strokeWidth: 0, fill: "#59677a" }} activeDot={{ r: 5 }} connectNulls={false} isAnimationActive={false} />
+            contentStyle={{ border: "1px solid var(--line)", borderRadius: 0, fontSize: 13 }}
+            labelStyle={{ color: "var(--text)", fontWeight: 600 }} />
+          <Line type="linear" dataKey="forecastMW" name="Forecast" stroke="var(--accent)" strokeWidth={2.5}
+            strokeDasharray="6 5" dot={{ r: 2, strokeWidth: 0, fill: "var(--accent)" }} activeDot={{ r: 5 }} connectNulls={false} isAnimationActive={false} />
+          <Line type="linear" dataKey="actualMW" name="Actual" stroke="var(--actual)" strokeWidth={2.5}
+            dot={{ r: 2, strokeWidth: 0, fill: "var(--actual)" }} activeDot={{ r: 5 }} connectNulls={false} isAnimationActive={false} />
         </LineChart>
       </ResponsiveContainer>
     </div>

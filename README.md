@@ -68,6 +68,11 @@ Run the tests without making external network requests:
 | `requirements.txt` | Pinned direct runtime dependencies. |
 | `requirements-dev.txt` | Runtime dependencies plus the HTTP test client. |
 
+The interface takes visual cues from [REint](https://reint.ai/): Inter typography,
+green accents, square panels, and thin borders. CSS variables share the palette
+between the dashboard and its chart. Inter loads from Google Fonts with system
+font fallbacks; the styling adds no JavaScript dependencies.
+
 ## Analysis assumptions
 
 - Decision dates are restricted to January 2026. Decision times are UK time,

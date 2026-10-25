@@ -58,13 +58,16 @@ export default function App() {
           </svg>
           Winddesk<span>GB WIND INTELLIGENCE</span>
         </a>
+        <nav className="header-links" aria-label="Dashboard sections">
+          <a href="#outlook">Wind outlook</a><a href="#accuracy">Accuracy analysis</a>
+        </nav>
         <span className="replay-badge"><span className="status-dot" />Historical replay · January 2026</span>
       </header>
 
       <main>
         <section className="intro">
-          <p className="eyebrow">THE DAY-AHEAD DESK</p>
-          <h1>A clearer view of<br />tomorrow’s wind.</h1>
+          <p className="eyebrow">FORECASTS / WIND GENERATION</p>
+          <h1>A clearer view of<br /><span>tomorrow’s wind.</span></h1>
           <p>See the forecast available at your purchasing decision.<br className="desktop-break" /> Understand how it performed when delivery arrived.</p>
         </section>
 
@@ -83,7 +86,7 @@ export default function App() {
               defaultValue={INITIAL_QUERY.decision_time} />
           </div>
           <button className="primary-button" disabled={request.loading}>
-            {request.loading ? "Loading outlook…" : "Load outlook"}<span aria-hidden="true">↗</span>
+            {request.loading ? "Loading outlook…" : "Load outlook"}<span aria-hidden="true">→</span>
           </button>
           <p className="control-note">Only forecasts published at or before your decision are included.</p>
         </form>
@@ -105,7 +108,7 @@ export default function App() {
             <div><p>Latest forecast publication</p><strong>{latestPublication == null ? "—" : `${snapshot(latestPublication)} UK`}</strong></div>
           </section>
 
-          <section className="chart-card" aria-labelledby="chart-title">
+          <section id="outlook" className="chart-card" aria-labelledby="chart-title">
             <div className="chart-heading">
               <div><p className="eyebrow">DELIVERY OUTLOOK</p><h2 id="chart-title">Forecast meets reality</h2></div>
               <div className="legend"><span><i className="swatch forecast" />Forecast</span><span><i className="swatch actual" />Actual</span></div>
@@ -121,7 +124,7 @@ export default function App() {
             </div>
           </section>
 
-          <section className="accuracy-section" aria-labelledby="accuracy-title">
+          <section id="accuracy" className="accuracy-section" aria-labelledby="accuracy-title">
             <div className="section-heading"><h2 id="accuracy-title">How accurate was this outlook?</h2><span>Based on {data.metrics.matchedCount} matching timestamps</span></div>
             <div className="metrics-grid">
               {METRICS.map((metric) => <article className="metric-card" key={metric.key}>
