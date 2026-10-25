@@ -4,8 +4,8 @@ A React dashboard and Python API for reviewing GB wind forecasts available at a 
 day-ahead purchasing decision and measuring their accuracy against reported outturn.
 The dashboard includes decision controls, a forecast comparison chart, and daily
 accuracy metrics. A production entry point serves the built dashboard and API
-together. Docker packaging, deployment, and the demonstration video are still
-to be completed.
+together, with Docker packaging for the complete application. Public deployment
+and the demonstration video are still to be completed.
 
 ## Run locally
 
@@ -75,8 +75,55 @@ directory. API routes take priority over frontend files. Unknown paths return
 Rebuild the frontend after changes to React or CSS. Node.js is needed to build,
 but only Python is needed to run the built application.
 
-This is a local verification of the production serving setup. Docker will
-automate the build and runtime steps; public hosting is still pending.
+This is a local verification of the production serving setup; public hosting
+is still pending.
+
+## Run with Docker
+
+Start Docker Desktop, then run from the repository root:
+
+```bash
+docker build --pull --platform linux/amd64 --provenance=false --output type=docker -t winddesk:local .
+docker run --rm --name winddesk --platform linux/amd64 -p 127.0.0.1:8081:8080 winddesk:local
+```
+
+Open <http://127.0.0.1:8081>. Port 8081 keeps this separate from the production
+preview on port 8080. The container includes the built frontend and API;
+you do not need to start the development servers. Stop it with Ctrl+C, or run
+`docker stop winddesk` from another terminal. `--rm` removes the stopped container;
+the image stays available for the next run. Rebuild the image after code changes.
+
+The Dockerfile has two stages:
+
+1. **Frontend build:** Node.js 24 installs the locked npm dependencies with
+   `npm ci`, then builds React. Package files are copied first so Docker can
+   reuse the dependency layer when only frontend source changes.
+2. **Python runtime:** Python 3.12 installs `requirements.txt`, then receives
+   the backend and the generated frontend files. The app runs as the `winddesk`
+   user. Node.js and `node_modules` stay in the build stage.
+
+`.dockerignore` keeps local environments, generated builds, caches, `.env`
+files, and Git history out of the build context. Docker creates its own build
+instead of copying the build from your laptop.
+
+`PORT` defaults to 8080 and can be set by the host. For example:
+
+```bash
+docker run --rm --name winddesk --platform linux/amd64 -e PORT=9090 -p 127.0.0.1:8081:9090 winddesk:local
+```
+
+The left port is on your computer; the right port is inside the container.
+`EXPOSE` documents the default container port; `-p` publishes it. Uvicorn listens
+on `0.0.0.0` inside the container so Docker can reach it. The startup command
+uses `exec` to pass shutdown signals directly to Python.
+
+The build command targets Linux `amd64`, which [Heroku's container runtime
+requires](https://devcenter.heroku.com/articles/container-registry-and-runtime#known-issues-and-limitations).
+Docker Desktop can build and run it on an ARM Mac using emulation. The export
+flags create a Docker-format image without an attestation manifest, matching
+Heroku's registry format requirement. For native local development, omit
+`--platform linux/amd64` from both commands.
+Base image tags receive updates; `--pull` checks for newer versions when rebuilding.
 
 ## Code layout
 
@@ -87,6 +134,7 @@ automate the build and runtime steps; public hosting is still pending.
 | `backend/analysis.py` | Match delivery timestamps and calculate MAE, RMSE, and bias. |
 | `backend/app.py` | Validate HTTP inputs and connect the pipeline. |
 | `backend/production.py` | Serve the API and built dashboard from one origin. |
+| `Dockerfile`, `.dockerignore` | Build the frontend and package the Python runtime without local generated files. |
 | `frontend/src/App.jsx` | Decision form, request state, results, and metric cards. |
 | `frontend/src/WindChart.jsx` | Display hourly series, preserving gaps for missing values. |
 | `frontend/src/styles.css` | Responsive dashboard styling. |

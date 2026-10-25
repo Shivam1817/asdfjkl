@@ -1,0 +1,12 @@
+.git
+.venv
+.agents
+.codex
+.aws
+**/node_modules
+**/dist
+**/__pycache__
+**/*.py[cod]
+**/.env
+**/.env.*
+**/.DS_Store
