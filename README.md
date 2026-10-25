@@ -1,11 +1,13 @@
 # Wind forecast analysis
 
+Live app: [Winddesk](https://asdfjkl-sigma.vercel.app/)
+
 A React dashboard and Python API for reviewing GB wind forecasts available at a historical
 day-ahead purchasing decision and measuring their accuracy against reported outturn.
 The dashboard includes decision controls, a forecast comparison chart, and daily
 accuracy metrics. A production entry point serves the built dashboard and API
-together, with Docker packaging for the complete application. Public deployment
-and the demonstration video are still to be completed.
+together, with Docker packaging for the complete application. The app is deployed
+on Vercel; the demonstration video is still to be completed.
 
 ## Run locally
 
@@ -185,6 +187,9 @@ documentation.
 
 ## Deployment
 
+Public app: <https://asdfjkl-sigma.vercel.app/>, hosted in **Shivam's projects
+(Hobby)**. Pushes to `main` deploy automatically through the connected GitHub repo.
+
 Vercel configuration uses the repository root with the **FastAPI** framework.
 The root `app.py` imports the existing production application, and
 `.python-version` selects Python 3.12. Python dependencies come from
@@ -197,4 +202,8 @@ through its Python runtime. The frontend keeps using the same `/api` URL;
 no API key or additional environment variables are required.
 The Docker image remains available for running the complete app as a container.
 
-A verified public URL will be added after deployment completes.
+Verified against the public domain: the dashboard and its generated assets load
+without login; a 31 January decision at 08:45 returns 1 February delivery with
+24 matching actuals. Invalid dates return 422, and unknown API/asset paths return
+404. The dashboard also fits a 390-pixel mobile viewport without horizontal
+overflow.
